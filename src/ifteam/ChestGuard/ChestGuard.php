@@ -88,15 +88,17 @@ class ChestGuard extends PluginBase implements Listener {
 		if ($this->configData ["{$block->x}:{$block->y}:{$block->z}"] != $event->getPlayer ()->getName ()) {
 			if ($event->getPlayer ()->isOp ())
 				return;
-			$area = $this->areaProvider->getArea ( $block->getLevel ()->getFolderName (), $block->x, $block->z );
-			if ($area instanceof \ifteam\SimpleArea\database\area\AreaSection) {
-				if ($area->isOwner ( $event->getPlayer ()->getName () ))
-					return;
-			}
-			$rent = $this->rentProvider->getRent ( $block->getLevel ()->getFolderName (), $block->x, $block->y, $block->z );
-			if ($rent instanceof \ifteam\SimpleArea\database\rent\RentSection) {
-				if ($rent->isOwner ( $event->getPlayer ()->getName () ))
-					return;
+			if ($this->areaProvider != null and $this->rentProvider != null) {
+				$area = $this->areaProvider->getArea ( $block->getLevel ()->getFolderName (), $block->x, $block->z );
+				if ($area instanceof \ifteam\SimpleArea\database\area\AreaSection) {
+					if ($area->isOwner ( $event->getPlayer ()->getName () ))
+						return;
+				}
+				$rent = $this->rentProvider->getRent ( $block->getLevel ()->getFolderName (), $block->x, $block->y, $block->z );
+				if ($rent instanceof \ifteam\SimpleArea\database\rent\RentSection) {
+					if ($rent->isOwner ( $event->getPlayer ()->getName () ))
+						return;
+				}
 			}
 			$event->getPlayer ()->sendMessage ( TextFormat::RED . "이 상자는 " . $this->configData ["{$block->x}:{$block->y}:{$block->z}"] . " 님의 소유입니다, 터치 불가 !" );
 			$event->setCancelled ();
